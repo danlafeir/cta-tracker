@@ -1,0 +1,26 @@
+{
+  "entries": {
+    "brew": {
+      "tidbyt/tidbyt/pixlet": {
+      },
+      "tidbyt/pixlet": {
+      },
+      "pixlet": {
+        "version": "0.28.4",
+        "bottle": false
+      }
+    }
+  },
+  "system": {
+    "macos": {
+      "ventura": {
+        "HOMEBREW_VERSION": "4.1.16",
+        "HOMEBREW_PREFIX": "/opt/homebrew",
+        "Homebrew/homebrew-core": "api",
+        "CLT": "14.3.1.0.1.1683849156",
+        "Xcode": "14.3",
+        "macOS": "13.4"
+      }
+    }
+  }
+}
