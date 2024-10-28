@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TrainArrivalPrediction(
     val line: Line,
-    val prediction: LocalDateTime,
+    val predictedArrivalTimeInMinutes: Int,
     val destination: Destination
 )
 

@@ -3,4 +3,4 @@ ktor:
         modules:
             - com.tidbyt_cta_tracker.bff.ApplicationKt.module
     deployment:
-        port: 8080
+        port: 1337
