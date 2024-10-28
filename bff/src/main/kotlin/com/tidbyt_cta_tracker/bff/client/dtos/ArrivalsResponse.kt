@@ -18,7 +18,7 @@ data class Arrivals(
 data class Arrival(
     val rt: Line,
     val arrT: LocalDateTime,
-    val destNm: String
+    val destNm: Destination
 )
 
 @Serializable
@@ -37,4 +37,30 @@ enum class Line {
     };
 
     abstract fun toDomainValue(): com.tidbyt_cta_tracker.bff.domain.Line
+}
+
+@Serializable
+enum class Destination {
+    @SerialName("Howard")
+    HOAWRD {
+        override fun toDomainValue() = com.tidbyt_cta_tracker.bff.domain.Destination.HOAWRD
+    },
+    @SerialName("95th/Dan Ryan")
+    NINETY_FIFTH_AND_DAN_RYAN {
+        override fun toDomainValue() = com.tidbyt_cta_tracker.bff.domain.Destination.NINETY_FIFTH_AND_DAN_RYAN
+    },
+    @SerialName("Loop")
+    LOOP {
+        override fun toDomainValue() = com.tidbyt_cta_tracker.bff.domain.Destination.LOOP
+    },
+    @SerialName("Kimball")
+    KIMBALL {
+        override fun toDomainValue() = com.tidbyt_cta_tracker.bff.domain.Destination.KIMBALL
+    },
+    @SerialName("Linden")
+    LINDEN {
+        override fun toDomainValue() = com.tidbyt_cta_tracker.bff.domain.Destination.LINDEN
+    };
+
+    abstract fun toDomainValue(): com.tidbyt_cta_tracker.bff.domain.Destination
 }

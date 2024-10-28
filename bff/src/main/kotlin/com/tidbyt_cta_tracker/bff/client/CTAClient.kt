@@ -17,7 +17,6 @@ class CTAClient(
         val response = httpClient.get(ARRIVAL_PATH, Headers.Empty, mapOf(Pair("mapid", FULLERTON)))
         val arrivalsResponse = jsonSerializer.decodeFromString<ArrivalsResponse>(response.bodyAsText())
         return arrivalsResponse.ctatt.eta
-            .filter { it.destNm == "Loop" }
-            .map { TrainArrivalPrediction(it.rt.toDomainValue(),it.arrT) }
+            .map { TrainArrivalPrediction(it.rt.toDomainValue(),it.arrT, it.destNm.toDomainValue()) }
     }
 }
