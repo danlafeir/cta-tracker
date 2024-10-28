@@ -3,6 +3,7 @@ package com.tidbyt_cta_tracker.bff.client
 import com.tidbyt_cta_tracker.bff.client.dtos.ArrivalsResponse
 import com.tidbyt_cta_tracker.bff.config.HttpClient
 import com.tidbyt_cta_tracker.bff.config.jsonSerializer
+import com.tidbyt_cta_tracker.bff.domain.TrainArrivalPrediction
 import io.ktor.client.statement.*
 import io.ktor.http.*
 
@@ -12,11 +13,11 @@ class CTAClient(
     val ARRIVAL_PATH = "/api/1.0/ttarrivals.aspx"
     val FULLERTON = "41220"
 
-    suspend fun getTrainArrivalPredictions(): ArrivalsResponse {
+    suspend fun getTrainArrivalPredictions(): List<TrainArrivalPrediction> {
         val response = httpClient.get(ARRIVAL_PATH, Headers.Empty, mapOf(Pair("mapid", FULLERTON)))
-        println(response.bodyAsText())
         val arrivalsResponse = jsonSerializer.decodeFromString<ArrivalsResponse>(response.bodyAsText())
-        println(arrivalsResponse.toString())
-        return arrivalsResponse
+        return arrivalsResponse.ctatt.eta
+            .filter { it.destNm == "Loop" }
+            .map { TrainArrivalPrediction(it.rt.toDomainValue(),it.arrT) }
     }
 }
