@@ -60,7 +60,7 @@ def get_schema():
             schema.Dropdown(
                 id = "station",
                 name = "Departing Station",
-                desc = "The CTA \"L\" Station to get departure schedule for.",
+                desc = "The CTA \"L\" Station to you would depart from",
                 icon = "train",
                 default = options[0].value,
                 options = options,
@@ -74,8 +74,8 @@ def get_schema():
                 options = destination_station_options,
             ),
             schema.Dropdown(
-                id = "timedelay",
-                name = "Time to station",
+                id = "time_delay",
+                name = "Your estiamted time to station",
                 desc = "Set a estimated time for you to get to the station",
                 icon = "stopwatch",
                 default = time_delay_options[0].value,
@@ -281,7 +281,7 @@ def get_journeys(station_code, config):
     next_arrivals = [build_journey(prediction) for prediction in journeys]
     filtered_arrivals = []
     for prediction in next_arrivals:
-        if config.get("destination_name", DEFAULT_DESTINATION_STATION) == prediction["destination_name"] or config.get("destination_name", DEFAULT_DESTINATION_STATION) == DEFAULT_DESTINATION_STATION and (int(prediction["eta"]) > int(config.get("timedelay", "0"))): 
+        if config.get("destination_name", DEFAULT_DESTINATION_STATION) == prediction["destination_name"] or config.get("destination_name", DEFAULT_DESTINATION_STATION) == DEFAULT_DESTINATION_STATION and (int(prediction["eta"]) > int(config.get("time_delay", "0"))): 
             filtered_arrivals.append(prediction) 
 
     # TODO: Determine if this cache call can be converted to the new HTTP cache.
