@@ -1,0 +1,3 @@
+[submodule "tidbyt-app/community"]
+	path = tidbyt-app/community
+	url = git@github.com:danlafeir/community.git

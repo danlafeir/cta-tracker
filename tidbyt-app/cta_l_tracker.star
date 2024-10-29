@@ -87,8 +87,10 @@ def get_schema():
 def main(config):
     widgetMode = config.bool("$widget")
     selected_station = config.get("station", DEFAULT_STATION)
+    destination_station = config.get("destination_name", DEFAULT_DESTINATION_STATION)
+    time_delay = int(config.get("time_delay", "0"))
     
-    arrivals = get_journeys(selected_station, config)
+    arrivals = get_journeys(selected_station, destination_station, time_delay)
 
     rendered_rows = render_arrival_list(arrivals, widgetMode)
 
@@ -281,11 +283,11 @@ def get_journeys(station_code, config):
     next_arrivals = [build_journey(prediction) for prediction in journeys]
     filtered_arrivals = []
     for prediction in next_arrivals:
-        if config.get("destination_name", DEFAULT_DESTINATION_STATION) == prediction["destination_name"] or config.get("destination_name", DEFAULT_DESTINATION_STATION) == DEFAULT_DESTINATION_STATION and (int(prediction["eta"]) > int(config.get("time_delay", "0"))): 
+        if destination_station == prediction["destination_name"] or destination_station == DEFAULT_DESTINATION_STATION and (int(prediction["eta"]) > time_delay): 
             filtered_arrivals.append(prediction) 
 
     # TODO: Determine if this cache call can be converted to the new HTTP cache.
-    cache.set(station_cache_key, json.encode(filtered_arrivals[:2]), ttl_seconds = 60)
+    cache.set(station_cache_key, json.encode(filtered_arrivals[:2]), ttl_seconds )
     return filtered_arrivals[:2]
 
 def build_journey(prediction):
