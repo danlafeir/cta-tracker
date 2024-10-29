@@ -40,6 +40,11 @@ DEFAULT_STATION = "40830"
 
 def get_schema():
     options = get_station_options()
+    time_delay_options = [schema.Option(
+        display = str(time),
+        value = str(time),
+    ) for time in [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]]
+    train_map = {"Blue": "Blue", "Red":"Red", "Brn":"Brown", "P":"Purple", "G": "Green", "Org":"Orange", "Pink":"Pink", "Y":"Yellow"}
 
     return schema.Schema(
         version = "1",
@@ -52,14 +57,27 @@ def get_schema():
                 default = options[0].value,
                 options = options,
             ),
-        ],
+            schema.Dropdown(
+                id = "timedelay",
+                name = "Time to station",
+                desc = "Set a estimated time for you to get to the station",
+                icon = "stopwatch",
+                default = time_delay_options[0].value,
+                options = time_delay_options,
+            ),] + [schema.Toggle(
+                id = train,
+                name = train_map[train],
+                desc = "Toggle on trains you would to see",
+                icon = "train",
+                default = False,
+            ) for train in train_map.keys()],
     )
 
 def main(config):
     widgetMode = config.bool("$widget")
     selected_station = config.get("station", DEFAULT_STATION)
-
-    arrivals = get_journeys(selected_station)
+    
+    arrivals = get_journeys(selected_station, config)
 
     rendered_rows = render_arrival_list(arrivals, widgetMode)
 
@@ -217,7 +235,7 @@ def get_station_options():
         ]
     return station_options
 
-def get_journeys(station_code):
+def get_journeys(station_code, config):
     """
     Gets top 2 arrivals scheduled for the selected station
     from CTA Arrivals API
@@ -248,9 +266,14 @@ def get_journeys(station_code):
         print("No trains found in response from API!")
         print(response.json()["ctatt"])
         journeys = []
+    
+    next_arrivals = [build_journey(prediction) for prediction in journeys]
+    filtered_arrivals = []
+    for prediction in next_arrivals:
+        if not config.bool(prediction["line"]) and not (prediction["eta"] < int(config.get("timedelay", "0"))): 
+            filtered_arrivals.append(prediction) 
 
-    next_arrivals = [build_journey(prediction) for prediction in journeys[:2]]
-
+    print(filtered_arrivals[:2])
     # TODO: Determine if this cache call can be converted to the new HTTP cache.
     cache.set(station_cache_key, json.encode(next_arrivals), ttl_seconds = 60)
     return next_arrivals
@@ -275,5 +298,6 @@ def build_journey(prediction):
         "line": line,
         "color_hex": color_hex,
         "eta_text": eta_text,
+        "eta": diff_minutes,
         "is_scheduled": is_scheduled,
     }
