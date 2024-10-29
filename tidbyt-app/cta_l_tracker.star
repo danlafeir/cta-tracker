@@ -67,9 +67,9 @@ def get_schema():
             ),] + [schema.Toggle(
                 id = train,
                 name = train_map[train],
-                desc = "Toggle on trains you would to see",
+                desc = "Toggle to see train",
                 icon = "train",
-                default = False,
+                default = True,
             ) for train in train_map.keys()],
     )
 
@@ -270,13 +270,12 @@ def get_journeys(station_code, config):
     next_arrivals = [build_journey(prediction) for prediction in journeys]
     filtered_arrivals = []
     for prediction in next_arrivals:
-        if not config.bool(prediction["line"]) and not (prediction["eta"] < int(config.get("timedelay", "0"))): 
+        if config.bool(prediction["line"], True) and (int(prediction["eta"]) > int(config.get("timedelay", "0"))): 
             filtered_arrivals.append(prediction) 
 
-    print(filtered_arrivals[:2])
     # TODO: Determine if this cache call can be converted to the new HTTP cache.
-    cache.set(station_cache_key, json.encode(next_arrivals), ttl_seconds = 60)
-    return next_arrivals
+    cache.set(station_cache_key, json.encode(filtered_arrivals[:2]), ttl_seconds = 60)
+    return filtered_arrivals[:2]
 
 def build_journey(prediction):
     """
